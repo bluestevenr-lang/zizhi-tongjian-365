@@ -10,8 +10,25 @@ hour = now.hour
 
 START_DATE = datetime(2026, 3, 8, tzinfo=BJT)
 today      = datetime(now.year, now.month, now.day, tzinfo=BJT)
-day_num    = max(1, min(365, (today - START_DATE).days + 1))
-time_pct   = round(day_num / 365 * 100, 1)
+day_offset = (today - START_DATE).days
+
+# 每天 3 篇，按时段递进：早 = 第1篇，午 = 第2篇，晚 = 第3篇
+if hour < 10:
+    session_idx = 0
+    session_label = "\u2600\ufe0f \u6668\u8bfb"
+    session_next  = "\U0001f552 \u4e2d\u535812\u70b9\u89c1"
+elif hour < 16:
+    session_idx = 1
+    session_label = "\u2600\ufe0f \u5348\u8bfb"
+    session_next  = "\U0001f319 \u665a\u4e0a8\u70b9\u89c1"
+else:
+    session_idx = 2
+    session_label = "\U0001f319 \u591c\u8bfb"
+    session_next  = "\U0001f305 \u660e\u65e98\u70b9\u89c1"
+
+story_num  = max(1, min(365, day_offset * 3 + session_idx + 1))
+total_read = min(365, day_offset * 3 + session_idx + 1)
+time_pct   = round(total_read / 365 * 100, 1)
 
 CONTENT = {
 
@@ -1833,119 +1850,68 @@ def send_markdown(title, text):
     r = requests.post(url, json=msg, timeout=15)
     print(r.json())
 
-def get_session():
-    if hour < 10:
-        return "morning"
-    elif hour < 16:
-        return "noon"
-    else:
-        return "evening"
+def main():
+    d = CONTENT.get(story_num, CONTENT[1])
 
-def build_morning(d):
-    """08:00 晨读：原文 + 译文 + 人物（打基础）"""
-    era   = d.get("era","")
-    vol   = d.get("vol","")
-    dyn   = d.get("dynasty","")
-    orig  = d.get("original","")
-    trans = d.get("translation","")
-    pname = d.get("person_name","")
-    person = d.get("person","")
-
-    title = f"\U0001f305 晨读·第{day_num}天·{era}"
-    body = f"""## \U0001f305 资治通鉴 · 晨读 · 第{day_num}天
-
-**{era}** \uff5c {vol} · {dyn}
-
----
-
-### \U0001f4dc 原文精读
-
-> {orig.replace(chr(10), chr(10) + '> ')}
-
----
-
-### \U0001f4d6 白话译文
-
-{trans}
-
----
-
-### \U0001f464 今日人物：{pname}
-
-{person}
-
----
-
-\U0001f4a1 **晨读提示**：先通读原文，感受古文韵味；再对照译文，理解字句含义；最后了解人物背景，为午间深读做准备。
-
-\U0001f525 **第 {day_num}/365 天 \uff5c {time_pct}%** \uff5c \U0001f552 中午12点见·深度解析"""
-    return title, body
-
-def build_noon(d):
-    """12:00 午思：解析 + 职场 + 情商（深度思考）"""
-    era      = d.get("era","")
-    pname    = d.get("person_name","")
-    analysis = d.get("analysis","")
-    work     = d.get("work","")
-    eq       = d.get("eq","")
-
-    title = f"\U0001f50d 午思·第{day_num}天·{pname}"
-    body = f"""## \U0001f50d 资治通鉴 · 午思 · 第{day_num}天
-
-**{era}** \uff5c {pname}
-
----
-
-### \U0001f9d0 章节深度解析
-
-{analysis}
-
----
-
-### \U0001f4bc 职场启示
-
-{work}
-
----
-
-### \U0001f9e0 情商修炼
-
-{eq}
-
----
-
-\U0001f4a1 **午思提示**：结合上午晨读的原文，想想这段历史对你当下的工作、人际有什么启发？试着用一句话总结今天的收获。
-
-\U0001f525 **第 {day_num}/365 天 \uff5c {time_pct}%** \uff5c \U0001f319 晚上8点见·夜悟总结"""
-    return title, body
-
-def build_evening(d):
-    """20:00 夜悟：学习方法 + 金句 + 回顾 + 明日预告（沉淀总结）"""
     era    = d.get("era","")
+    vol    = d.get("vol","")
+    dyn    = d.get("dynasty","")
+    orig   = d.get("original","")
+    trans  = d.get("translation","")
     pname  = d.get("person_name","")
+    person = d.get("person","")
+    analysis = d.get("analysis","")
+    work   = d.get("work","")
+    eq     = d.get("eq","")
     study  = d.get("study","")
     quote  = d.get("quote","")
     qnote  = d.get("quote_note","")
     next_t = d.get("next_title","")
     next_p = d.get("next_preview", d.get("next",""))
-    orig   = d.get("original","")
 
-    first_line = orig.split(chr(10))[0][:40] if orig else era
+    title = f"{session_label}\u00b7\u7b2c{story_num}\u7bc7\u00b7{era}"
 
-    title = f"\U0001f319 夜悟·第{day_num}天·{pname}"
-    body = f"""## \U0001f319 资治通鉴 · 夜悟 · 第{day_num}天
+    body = f"""## {session_label} \u00b7 \u8d44\u6cbb\u901a\u9274 \u00b7 \u7b2c{story_num}\u7bc7
 
-**{era}** \uff5c {pname}
+**{era}** \uff5c {vol} \u00b7 {dyn}
 
 ---
 
-### \U0001f4dd 学习方法
+### \U0001f4dc \u539f\u6587
+
+> {orig.replace(chr(10), chr(10) + '> ')}
+
+### \U0001f4d6 \u8bd1\u6587
+
+{trans}
+
+---
+
+### \U0001f464 \u4eba\u7269\uff1a{pname}
+
+{person}
+
+---
+
+### \U0001f50d \u7ae0\u8282\u89e3\u6790
+
+{analysis}
+
+### \U0001f4bc \u804c\u573a\u542f\u793a
+
+{work}
+
+### \U0001f9e0 \u60c5\u5546\u4fee\u70bc
+
+{eq}
+
+### \U0001f4dd \u5b66\u4e60\u65b9\u6cd5
 
 {study}
 
 ---
 
-### \u2728 今日金句
+### \u2728 \u91d1\u53e5
 
 > \u300c{quote}\u300d
 
@@ -1953,42 +1919,16 @@ def build_evening(d):
 
 ---
 
-### \U0001f4cb 今日回顾
-
-\U0001f4dc **晨读**：{first_line}...
-\U0001f50d **午思**：{pname} \u2014\u2014 解析与职场启示
-\U0001f319 **夜悟**：沉淀金句，学以致用
-
-\U0001f4ad **睡前一问**：今天的故事中，哪个细节让你印象最深？它和你的生活有什么关联？
-
----
-
-### \u23ed 明日预告：{next_t}
+### \u23ed \u4e0b\u4e00\u7bc7\u9884\u544a\uff1a{next_t}
 
 {next_p}
 
 ---
 
-\U0001f525 **第 {day_num}/365 天 \uff5c {time_pct}%** \uff5c 以史为鉴\uff0c\u7812\u780e\u524d\u884c \U0001f3ef
-\U0001f305 明早8点见\uff01"""
-    return title, body
-
-def main():
-    d = CONTENT.get(day_num, CONTENT[1])
-    session = get_session()
-
-    if session == "morning":
-        title, body = build_morning(d)
-        label = "\u6668\u8bfb"
-    elif session == "noon":
-        title, body = build_noon(d)
-        label = "\u5348\u601d"
-    else:
-        title, body = build_evening(d)
-        label = "\u591c\u609f"
+\U0001f525 **\u7b2c {story_num}/365 \u7bc7 \uff5c \u5df2\u5b8c\u6210 {time_pct}%** \uff5c {session_next} \uff5c \u4ee5\u53f2\u4e3a\u9274\uff0c\u7812\u780e\u524d\u884c \U0001f3ef"""
 
     send_markdown(title, body)
-    print(f"\u2705 \u7b2c{day_num}\u5929\u00b7{label}\u63a8\u9001\u5b8c\u6210\uff08{d.get('era','')}  \u5317\u4eac\u65f6\u95f4{hour}:\u0030\u0030\uff09")
+    print(f"\u2705 {session_label}\u00b7\u7b2c{story_num}\u7bc7\u63a8\u9001\u5b8c\u6210\uff08{era}\uff09")
 
 if __name__ == "__main__":
     main()
