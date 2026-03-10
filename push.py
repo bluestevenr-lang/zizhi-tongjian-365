@@ -8,7 +8,7 @@ BJT = timezone(timedelta(hours=8))
 now = datetime.now(BJT)
 hour = now.hour
 
-START_DATE = datetime(2026, 3, 8, tzinfo=BJT)
+START_DATE = datetime(2026, 3, 10, tzinfo=BJT)
 today      = datetime(now.year, now.month, now.day, tzinfo=BJT)
 day_offset = (today - START_DATE).days
 
