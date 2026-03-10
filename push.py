@@ -1825,16 +1825,20 @@ def sign():
     )
     return ts, sig
 
-def send(text):
+def send_markdown(title, text):
+    """发送 markdown 格式钉钉消息（支持排版）"""
     ts, sig = sign()
     url = f"{WEBHOOK}&timestamp={ts}&sign={sig}"
-    r = requests.post(url, json={"msgtype":"text","text":{"content":text}}, timeout=10)
+    msg = {
+        "msgtype": "markdown",
+        "markdown": {"title": title, "text": text}
+    }
+    r = requests.post(url, json=msg, timeout=15)
     print(r.json())
-    time.sleep(2)
 
 def main():
     d = CONTENT.get(day_num, CONTENT[1])
-    
+
     era       = d.get("era","")
     vol       = d.get("vol","")
     dynasty   = d.get("dynasty","")
@@ -1851,60 +1855,66 @@ def main():
     next_t    = d.get("next_title","")
     next_p    = d.get("next_preview", d.get("next",""))
 
-    # ── 第一条：晨读 ──
-    msg1 = f"""📖【资治通鉴·第{day_num}天】{era}
-━━━━━━━━━━━━━━━━
-📚 {vol}·{dynasty}
+    title = f"\U0001f4d6 资治通鉴·第{day_num}天·{era}"
 
-【原文】
-{orig}
+    body = f"""## \U0001f4d6 资治通鉴 · 第{day_num}天
 
-【译文】
+**{era}** ｜ {vol} · {dynasty}
+
+---
+
+### \U0001f4dc 原文
+
+> {orig.replace(chr(10), chr(10) + '> ')}
+
+### \U0001f4d6 译文
+
 {trans}
 
-━━━━━━━━━━━━━━━━
-👤 今日人物：{pname}
+---
+
+### \U0001f464 今日人物：{pname}
+
 {person}
 
-坚持第 {day_num}/365 天 ｜ 已完成 {time_pct}%"""
+---
 
-    # ── 第二条：深读 ──
-    msg2 = f"""🔍【深读·第{day_num}天】{pname}
-━━━━━━━━━━━━━━━━
-📌 章节解析
+### \U0001f50d 章节解析
+
 {analysis}
 
-💼 职场启示
+### \U0001f4bc 职场启示
+
 {work}
 
-🧠 情商修炼
+### \U0001f9e0 情商修炼
+
 {eq}
 
-📝 学习方法
-{study}"""
+### \U0001f4dd 学习方法
 
-    # ── 第三条：夜总结 ──
-    msg3 = f"""✨【夜总结·第{day_num}天】
-━━━━━━━━━━━━━━━━
-📜 今日金句
-「{quote}」
-——{qnote}
+{study}
 
-🌙 今日回顾
-{era}·{pname}
-读完今天，你学到了什么？
+---
 
-⏭ 明日预告：{next_t}
+### \u2728 今日金句
+
+> 「{quote}」
+
+*{qnote}*
+
+---
+
+### \u23ed 明日预告：{next_t}
+
 {next_p}
 
-━━━━━━━━━━━━━━━━
-🔥 第 {day_num}/365 天，继续加油！
-以史为鉴，砥砺前行 🏯"""
+---
 
-    send(msg1)
-    send(msg2)
-    send(msg3)
-    print(f"✅ 第{day_num}天推送完成（{era}）")
+\U0001f525 **第 {day_num}/365 天 ｜ 已完成 {time_pct}%** ｜ 以史为鉴，砥砺前行 \U0001f3ef"""
+
+    send_markdown(title, body)
+    print(f"\u2705 第{day_num}天推送完成（{era}）")
 
 if __name__ == "__main__":
     main()
