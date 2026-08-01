@@ -1,4 +1,4 @@
-import requests, hashlib, hmac, base64, time, os, urllib.parse
+import requests, hashlib, hmac, base64, time, os, json, urllib.parse
 from datetime import datetime, timezone, timedelta
 
 WEBHOOK = os.environ.get('DINGTALK_WEBHOOK', '')
@@ -8,9 +8,22 @@ BJT = timezone(timedelta(hours=8))
 now = datetime.now(BJT)
 hour = now.hour
 
-START_DATE = datetime(2026, 3, 10, tzinfo=BJT)
-today      = datetime(now.year, now.month, now.day, tzinfo=BJT)
-day_offset = (today - START_DATE).days
+# 2026-08-01 起进度由 progress.json 驱动：每次推送 = 上次篇数 +1，
+# 推完由工作流把进度提交回仓库——不再按日期折算（避免停摆后跳篇），
+# 且每日提交让仓库保持活跃，根治 Actions「60 天无提交自动停用 schedule」。
+PROGRESS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'progress.json')
+
+def load_last():
+    try:
+        with open(PROGRESS_FILE) as f:
+            return int(json.load(f)['last'])
+    except Exception:
+        return 185  # 2026-05-10 被停用前推到第 185 篇
+
+def save_last(n):
+    with open(PROGRESS_FILE, 'w') as f:
+        json.dump({'last': n, 'updated': now.strftime('%Y-%m-%d %H:%M:%S +08:00')},
+                  f, ensure_ascii=False)
 
 # 每天 3 篇，按时段递进：早 = 第1篇，午 = 第2篇，晚 = 第3篇
 if hour < 10:
@@ -26,9 +39,9 @@ else:
     session_label = "\U0001f319 \u591c\u8bfb"
     session_next  = "\U0001f305 \u660e\u65e98\u70b9\u89c1"
 
-story_num  = max(1, min(365, day_offset * 3 + session_idx + 1))
-total_read = min(365, day_offset * 3 + session_idx + 1)
-time_pct   = round(total_read / 365 * 100, 1)
+last_num   = load_last()
+story_num  = min(365, last_num + 1)
+time_pct   = round(story_num / 365 * 100, 1)
 
 CONTENT = {
 
@@ -1848,9 +1861,16 @@ def send_markdown(title, text):
     url = f"{WEBHOOK}&timestamp={ts}&sign={sig}"
     msg = {"msgtype": "markdown", "markdown": {"title": title, "text": text}}
     r = requests.post(url, json=msg, timeout=15)
-    print(r.json())
+    resp = r.json()
+    print(resp)
+    if resp.get('errcode') != 0:
+        raise SystemExit(f"钉钉推送失败，不记进度: {resp}")
 
 def main():
+    if last_num >= 365:
+        print("🎉 365 篇已全部推送完成，无需再推")
+        return
+
     d = CONTENT.get(story_num, CONTENT[1])
 
     era    = d.get("era","")
@@ -1928,6 +1948,7 @@ def main():
 \U0001f525 **\u7b2c {story_num}/365 \u7bc7 \uff5c \u5df2\u5b8c\u6210 {time_pct}%** \uff5c {session_next} \uff5c \u4ee5\u53f2\u4e3a\u9274\uff0c\u7812\u780e\u524d\u884c \U0001f3ef"""
 
     send_markdown(title, body)
+    save_last(story_num)
     print(f"\u2705 {session_label}\u00b7\u7b2c{story_num}\u7bc7\u63a8\u9001\u5b8c\u6210\uff08{era}\uff09")
 
 if __name__ == "__main__":
