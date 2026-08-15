@@ -12,13 +12,19 @@ hour = now.hour
 # 推完由工作流把进度提交回仓库——不再按日期折算（避免停摆后跳篇），
 # 且每日提交让仓库保持活跃，根治 Actions「60 天无提交自动停用 schedule」。
 PROGRESS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'progress.json')
+MAX_MARKDOWN_CHARS = 12000
 
 def load_last():
     try:
         with open(PROGRESS_FILE) as f:
-            return int(json.load(f)['last'])
-    except Exception:
-        return 185  # 2026-05-10 被停用前推到第 185 篇
+            progress = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"无法读取有效进度文件，停止推送: {exc}") from exc
+
+    last = progress.get('last') if isinstance(progress, dict) else None
+    if isinstance(last, bool) or not isinstance(last, int) or not 0 <= last <= 365:
+        raise RuntimeError(f"进度 last 必须是 0-365 的整数，实际为: {last!r}")
+    return last
 
 def save_last(n):
     with open(PROGRESS_FILE, 'w') as f:
@@ -2425,6 +2431,11 @@ def main():
 ---
 
 \U0001f525 **\u7b2c {story_num}/365 \u7bc7 \uff5c \u5df2\u5b8c\u6210 {time_pct}%** \uff5c {session_next} \uff5c \u4ee5\u53f2\u4e3a\u9274\uff0c\u7812\u780e\u524d\u884c \U0001f3ef"""
+
+    if len(body) > MAX_MARKDOWN_CHARS:
+        raise SystemExit(
+            f"第{story_num}篇消息长度{len(body)}超过{MAX_MARKDOWN_CHARS}字符，停止推送"
+        )
 
     send_markdown(title, body)
     save_last(story_num)
