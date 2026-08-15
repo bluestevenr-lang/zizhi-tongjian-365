@@ -2277,12 +2277,45 @@ def send_markdown(title, text):
     if resp.get('errcode') != 0:
         raise SystemExit(f"钉钉推送失败，不记进度: {resp}")
 
+def validate_deep_read(story_number, story):
+    """217篇以后只允许完整深读内容通过，杜绝旧短模板继续外发。"""
+    if story is None:
+        raise SystemExit(f"第{story_number}篇不存在：停止推送，不使用备用内容")
+    if story_number < 217:
+        return
+    minimums = {
+        "original": 80,
+        "translation": 100,
+        "person": 160,
+        "analysis": 100,
+        "work": 50,
+        "eq": 45,
+        "study": 45,
+    }
+    failures = [
+        f"{field}={len(story.get(field, ''))}<{minimum}"
+        for field, minimum in minimums.items()
+        if len(story.get(field, '')) < minimum
+    ]
+    learning_fields = (
+        "original", "translation", "person", "analysis", "work", "eq", "study"
+    )
+    total_length = sum(len(story.get(field, "")) for field in learning_fields)
+    if total_length < 650:
+        failures.append(f"total={total_length}<650")
+    if failures:
+        raise SystemExit(
+            f"第{story_number}篇未达到深读质量线，停止推送且不推进进度："
+            + ", ".join(failures)
+        )
+
 def main():
     if last_num >= 365:
         print("🎉 365 篇已全部推送完成，无需再推")
         return
 
-    d = CONTENT.get(story_num, CONTENT[1])
+    d = CONTENT.get(story_num)
+    validate_deep_read(story_num, d)
 
     era    = d.get("era","")
     vol    = d.get("vol","")
