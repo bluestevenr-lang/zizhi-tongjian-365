@@ -29,7 +29,9 @@ jobs:
         env:
           DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
-        run: python push.py
+        run: |
+          python scripts/deep_read_content.py --validate
+          python push.py
 
       # 进度提交回仓库：既是断点续推的存档，也让仓库保持活跃，
       # 避免 GitHub「60 天无提交自动停用 schedule」（2026-05-10 停摆的根因）
