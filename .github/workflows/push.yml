@@ -10,6 +10,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: zizhi-daily-push
+  cancel-in-progress: false
+
 jobs:
   push-to-dingtalk:
     runs-on: ubuntu-latest
