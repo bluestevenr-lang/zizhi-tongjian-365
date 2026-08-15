@@ -2257,6 +2257,35 @@ CONTENT.update({
 
 })
 
+# 第218篇起的深读内容拆到独立JSON，避免再次因单个超大Python字典漏补批次。
+DEEP_READ_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "content", "deep_read_218_365.json"
+)
+
+def load_deep_read_overrides():
+    try:
+        with open(DEEP_READ_FILE, encoding="utf-8") as f:
+            rows = json.load(f)
+    except FileNotFoundError:
+        raise SystemExit(f"深读内容文件不存在：{DEEP_READ_FILE}")
+    if not isinstance(rows, list):
+        raise SystemExit("deep_read_218_365.json 必须是JSON数组")
+    seen = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise SystemExit("深读内容的每一项都必须是JSON对象")
+        number = row.get("number")
+        if not isinstance(number, int) or not 218 <= number <= 365:
+            raise SystemExit(f"深读篇号无效：{number}")
+        if number in seen:
+            raise SystemExit(f"深读篇号重复：{number}")
+        seen.add(number)
+        story = dict(row)
+        story.pop("number")
+        CONTENT[number] = story
+
+load_deep_read_overrides()
+
 def sign():
     ts = str(round(time.time() * 1000))
     s  = f"{ts}\n{SECRET}"
