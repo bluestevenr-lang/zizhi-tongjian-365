@@ -61,6 +61,21 @@ def validate_rows(rows: list[dict]) -> None:
                 )
 
 
+def validate_sequence(rows: list[dict], required_start: int | None = None) -> None:
+    """Reject missing lesson numbers inside a generated or merged batch."""
+    if not rows:
+        raise ValueError("deep-read entries cannot be empty")
+    numbers = sorted(row["number"] for row in rows)
+    if required_start is not None and numbers[0] != required_start:
+        raise ValueError(
+            f"deep-read library must start at lesson {required_start}, got {numbers[0]}"
+        )
+    expected = list(range(numbers[0], numbers[-1] + 1))
+    if numbers != expected:
+        missing = sorted(set(expected) - set(numbers))
+        raise ValueError(f"deep-read sequence has missing lessons: {missing}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--validate", action="store_true")
@@ -68,9 +83,11 @@ def main() -> int:
     args = parser.parse_args()
     existing = load_rows(TARGET)
     validate_rows(existing)
+    validate_sequence(existing, required_start=218)
     if args.merge:
         incoming = load_rows(args.merge)
         validate_rows(incoming)
+        validate_sequence(incoming)
         by_number = {row["number"]: row for row in existing}
         overlap = sorted(set(by_number) & {row["number"] for row in incoming})
         if overlap:
@@ -78,6 +95,7 @@ def main() -> int:
         by_number.update({row["number"]: row for row in incoming})
         merged = [by_number[number] for number in sorted(by_number)]
         validate_rows(merged)
+        validate_sequence(merged, required_start=218)
         temporary = TARGET.with_suffix(".json.tmp")
         temporary.write_text(
             json.dumps(merged, ensure_ascii=False, indent=2) + "\n",

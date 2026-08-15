@@ -2283,6 +2283,12 @@ def load_deep_read_overrides():
         story = dict(row)
         story.pop("number")
         CONTENT[number] = story
+    if not seen:
+        raise SystemExit("深读内容不能为空")
+    expected = set(range(218, max(seen) + 1))
+    missing = sorted(expected - seen)
+    if missing:
+        raise SystemExit(f"深读内容缺少篇号：{missing}")
 
 load_deep_read_overrides()
 
