@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 
@@ -83,6 +84,9 @@ def main() -> int:
     args = parser.parse_args()
     existing = load_rows(TARGET)
     validate_rows(existing)
+    sys.path.insert(0, str(ROOT))
+    from editorial import validate_library
+    validate_library({row['number']: row for row in existing})
     validate_sequence(existing, required_start=218)
     if args.merge:
         incoming = load_rows(args.merge)

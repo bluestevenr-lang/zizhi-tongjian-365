@@ -36,7 +36,9 @@ jobs:
         run: pip install requests
 
       - name: 校验深读内容
-        run: python scripts/deep_read_content.py --validate
+        run: |
+          python scripts/deep_read_content.py --validate
+          python -m unittest discover -s tests
 
       - name: 发送钉钉推送
         if: github.event_name == 'schedule' || inputs.dry_run == false

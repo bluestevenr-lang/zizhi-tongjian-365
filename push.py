@@ -2358,79 +2358,10 @@ def main():
     d = CONTENT.get(story_num)
     validate_deep_read(story_num, d)
 
-    era    = d.get("era","")
-    vol    = d.get("vol","")
-    dyn    = d.get("dynasty","")
-    orig   = d.get("original","")
-    trans  = d.get("translation","")
-    pname  = d.get("person_name","")
-    person = d.get("person","")
-    analysis = d.get("analysis","")
-    work   = d.get("work","")
-    eq     = d.get("eq","")
-    study  = d.get("study","")
-    quote  = d.get("quote","")
-    qnote  = d.get("quote_note","")
-    next_t = d.get("next_title","")
-    next_p = d.get("next_preview", d.get("next",""))
-
-    title = f"{session_label}\u00b7\u7b2c{story_num}\u7bc7\u00b7{era}"
-
-    body = f"""## {session_label} \u00b7 \u8d44\u6cbb\u901a\u9274 \u00b7 \u7b2c{story_num}\u7bc7
-
-**{era}** \uff5c {vol} \u00b7 {dyn}
-
----
-
-### \U0001f4dc \u539f\u6587
-
-> {orig.replace(chr(10), chr(10) + '> ')}
-
-### \U0001f4d6 \u8bd1\u6587
-
-{trans}
-
----
-
-### \U0001f464 \u4eba\u7269\uff1a{pname}
-
-{person}
-
----
-
-### \U0001f50d \u7ae0\u8282\u89e3\u6790
-
-{analysis}
-
-### \U0001f4bc \u804c\u573a\u542f\u793a
-
-{work}
-
-### \U0001f9e0 \u60c5\u5546\u4fee\u70bc
-
-{eq}
-
-### \U0001f4dd \u5b66\u4e60\u65b9\u6cd5
-
-{study}
-
----
-
-### \u2728 \u91d1\u53e5
-
-> \u300c{quote}\u300d
-
-*{qnote}*
-
----
-
-### \u23ed \u4e0b\u4e00\u7bc7\u9884\u544a\uff1a{next_t}
-
-{next_p}
-
----
-
-\U0001f525 **\u7b2c {story_num}/365 \u7bc7 \uff5c \u5df2\u5b8c\u6210 {time_pct}%** \uff5c {session_next} \uff5c \u4ee5\u53f2\u4e3a\u9274\uff0c\u7812\u780e\u524d\u884c \U0001f3ef"""
+    from editorial import build_markdown, validate_library
+    validate_library(CONTENT)
+    title, body = build_markdown(story_num, d, session_label, session_next)
+    era = d.get('era', '')
 
     if len(body) > MAX_MARKDOWN_CHARS:
         raise SystemExit(
