@@ -2350,8 +2350,15 @@ def validate_deep_read(story_number, story):
             + ", ".join(failures)
         )
 
-def main():
-    if last_num >= 365:
+def main(argv=()):
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--republish-last',action='store_true')
+    args=parser.parse_args(argv)
+    story_num=last_num if args.republish_last else min(365,last_num+1)
+    if args.republish_last and last_num == 0:
+        raise SystemExit('没有已发送篇目可重发')
+    if last_num >= 365 and not args.republish_last:
         print("🎉 365 篇已全部推送完成，无需再推")
         return
 
@@ -2369,8 +2376,9 @@ def main():
         )
 
     send_markdown(title, body)
-    save_last(story_num)
+    if not args.republish_last:
+        save_last(story_num)
     print(f"\u2705 {session_label}\u00b7\u7b2c{story_num}\u7bc7\u63a8\u9001\u5b8c\u6210\uff08{era}\uff09")
 
 if __name__ == "__main__":
-    main()
+    main(None)

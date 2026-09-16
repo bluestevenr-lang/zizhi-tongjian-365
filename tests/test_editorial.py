@@ -42,5 +42,11 @@ class EditorialTests(unittest.TestCase):
             self.assertIn(push.CONTENT[310]['editorial']['title'],send.call_args.args[1])
             save.assert_called_once_with(310)
 
+    def test_republish_keeps_progress(self):
+        with patch.object(push,'last_num',311),patch.object(push,'send_markdown') as send,patch.object(push,'save_last') as save:
+            push.main(['--republish-last'])
+            self.assertIn(push.CONTENT[311]['editorial']['title'],send.call_args.args[1])
+            save.assert_not_called()
 
-if __name__=='__main__':unittest.main()
+
+if __name__=='__main__' :unittest.main()
