@@ -1,8 +1,13 @@
 {
   "sites": [
-    {"key": "ikun", "name": "ikun资源（DoctorX全集在这）", "type": 1, "api": "https://ikunzyapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
+    {"key": "ikun", "name": "ikun资源", "type": 1, "api": "https://ikunzyapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
     {"key": "ffzy", "name": "非凡资源", "type": 1, "api": "https://cj.ffzyapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "lzi", "name": "量子资源", "type": 1, "api": "https://cj.lziapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1}
+    {"key": "lzi", "name": "量子资源", "type": 1, "api": "https://cj.lziapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
+    {"key": "gszy", "name": "光速资源", "type": 1, "api": "https://api.guangsuapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
+    {"key": "bdzy", "name": "百度云资源", "type": 1, "api": "https://api.apibdzy.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
+    {"key": "hnzy", "name": "红牛资源", "type": 1, "api": "https://www.hongniuzy2.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
+    {"key": "zdzy", "name": "最大资源", "type": 1, "api": "https://api.zuidapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
+    {"key": "hhzy", "name": "豪华资源", "type": 1, "api": "https://hhzyapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1}
   ],
   "lives": [
     {"name": "直播", "type": 0, "url": "https://live.zbds.top/tv/iptv4.txt"}
