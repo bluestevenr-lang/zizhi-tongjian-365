@@ -1,18 +1,168 @@
 {
-  "sites": [
-    {"key": "ikun", "name": "ikun资源", "type": 1, "api": "https://ikunzyapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "ffzy", "name": "非凡资源", "type": 1, "api": "https://cj.ffzyapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "lzi", "name": "量子资源", "type": 1, "api": "https://cj.lziapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "gszy", "name": "光速资源", "type": 1, "api": "https://api.guangsuapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "bdzy", "name": "百度云资源", "type": 1, "api": "https://api.apibdzy.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "hnzy", "name": "红牛资源", "type": 1, "api": "https://www.hongniuzy2.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "zdzy", "name": "最大资源", "type": 1, "api": "https://api.zuidapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1},
-    {"key": "hhzy", "name": "豪华资源", "type": 1, "api": "https://hhzyapi.com/api.php/provide/vod", "searchable": 1, "quickSearch": 1, "filterable": 1}
-  ],
-  "lives": [
-    {"name": "直播", "type": 0, "url": "https://live.zbds.top/tv/iptv4.txt"}
-  ],
-  "parses": [],
-  "flags": ["youku", "qq", "iqiyi", "qiyi", "letv", "sohu", "tudou", "pptv", "mgtv"],
-  "ads": []
+ "sites": [
+  {
+   "key": "ikun",
+   "name": "ikun资源",
+   "type": 1,
+   "api": "https://ikunzyapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "ffzy",
+   "name": "非凡资源",
+   "type": 1,
+   "api": "https://cj.ffzyapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "lzi",
+   "name": "量子资源",
+   "type": 1,
+   "api": "https://cj.lziapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "gszy",
+   "name": "光速资源",
+   "type": 1,
+   "api": "https://api.guangsuapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "bdzy",
+   "name": "百度云资源",
+   "type": 1,
+   "api": "https://api.apibdzy.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hnzy",
+   "name": "红牛资源",
+   "type": 1,
+   "api": "https://www.hongniuzy2.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "zdzy",
+   "name": "最大资源",
+   "type": 1,
+   "api": "https://api.zuidapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "hhzy",
+   "name": "豪华资源",
+   "type": 1,
+   "api": "https://hhzyapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "jszy",
+   "name": "极速资源",
+   "type": 1,
+   "api": "https://jszyapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "jyzy",
+   "name": "金鹰资源",
+   "type": 1,
+   "api": "https://jyzyapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "mdzy",
+   "name": "魔都资源",
+   "type": 1,
+   "api": "https://www.mdzyapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "sbzy",
+   "name": "速播资源",
+   "type": 1,
+   "api": "https://subocaiji.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "fhzy",
+   "name": "凤凰资源",
+   "type": 1,
+   "api": "https://fhapi9.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "ukzy",
+   "name": "U酷资源",
+   "type": 1,
+   "api": "https://api.ukuapi.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "wjzy",
+   "name": "无尽资源",
+   "type": 1,
+   "api": "https://api.wujinapi.me/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  },
+  {
+   "key": "s360",
+   "name": "360资源",
+   "type": 1,
+   "api": "https://360zy.com/api.php/provide/vod",
+   "searchable": 1,
+   "quickSearch": 1,
+   "filterable": 1
+  }
+ ],
+ "lives": [
+  {
+   "name": "直播",
+   "type": 0,
+   "url": "https://live.zbds.top/tv/iptv4.txt"
+  }
+ ],
+ "parses": [],
+ "flags": [
+  "youku",
+  "qq",
+  "iqiyi",
+  "qiyi",
+  "letv",
+  "sohu",
+  "tudou",
+  "pptv",
+  "mgtv"
+ ],
+ "ads": []
 }
